@@ -14,8 +14,9 @@ let imageList = [];       // 图片文件名数组
 let currentIndex = -1;    // 当前展示图片的索引
 let isLoading = false;    // 是否正在加载图片
 
-// 图片文件夹在服务器上的静态资源路径（由 express.js 映射到本地 图片tr 目录）
-const IMAGE_BASE_URL = '/images';
+// 图片文件夹在服务器上的静态资源路径。
+// Cloudflare Pages 可能从仓库根目录发布，本地 Express 则映射到 /images。
+let imageBaseUrl = '/images';
 
 // ============================
 // DOM 元素引用
@@ -60,20 +61,7 @@ async function init() {
 // ============================
 async function loadImageList() {
     try {
-        // 优先读取预生成的 images.json（适合 Cloudflare Pages/Workers 纯静态部署）
-        let response = await fetch('/images.json');
-
-        // 如果 images.json 不存在（比如本地旧版本服务），回退到 /api/images
-        if (!response.ok) {
-            console.warn('[提示] /images.json 不存在，回退到 /api/images');
-            response = await fetch('/api/images');
-        }
-
-        if (!response.ok) {
-            throw new Error(`服务器响应异常: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await fetchImageManifest();
         imageList = data.images || [];
 
         if (imageList.length === 0) {
@@ -90,6 +78,32 @@ async function loadImageList() {
     }
 }
 
+async function fetchImageManifest() {
+    const manifestSources = [
+        { url: '/images.json', imageBaseUrl: '/图片tr' },
+        { url: '/public/images.json', imageBaseUrl: '/public/图片tr' },
+        { url: '/api/images', imageBaseUrl: '/images' }
+    ];
+
+    for (const source of manifestSources) {
+        try {
+            const response = await fetch(source.url);
+            const contentType = response.headers.get('content-type') || '';
+
+            if (!response.ok || !contentType.includes('application/json')) {
+                continue;
+            }
+
+            imageBaseUrl = source.imageBaseUrl;
+            return await response.json();
+        } catch (error) {
+            console.warn(`[提示] 无法读取 ${source.url}:`, error);
+        }
+    }
+
+    throw new Error('无法读取图片清单');
+}
+
 // ============================
 // 图片展示逻辑
 // ============================
@@ -104,7 +118,7 @@ function showRandomImage() {
 
     currentIndex = newIndex;
     const imageName = imageList[currentIndex];
-    const imageUrl = `${IMAGE_BASE_URL}/${encodeURIComponent(imageName)}`;
+    const imageUrl = `${imageBaseUrl}/${encodeURIComponent(imageName)}`;
 
     loadImage(imageUrl);
     updateCounter();
@@ -149,7 +163,7 @@ async function handleDownloadClick() {
     if (imageList.length === 0 || currentIndex < 0) return;
 
     const imageName = imageList[currentIndex];
-    const imageUrl = `${IMAGE_BASE_URL}/${encodeURIComponent(imageName)}`;
+    const imageUrl = `${imageBaseUrl}/${encodeURIComponent(imageName)}`;
 
     try {
         // 使用 fetch 获取图片 Blob，再创建临时下载链接
