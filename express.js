@@ -22,8 +22,11 @@ const PORT = 8080;
 // 项目根目录
 const ROOT_DIR = __dirname;
 
-// 图片文件夹的本地绝对路径（与 express.js 同级目录下的 "图片tr" 文件夹）
-const IMAGE_DIR = path.join(ROOT_DIR, '图片tr');
+// 静态资源目录（与 Cloudflare Workers 的 assets.directory 保持一致）
+const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
+
+// 图片文件夹的本地绝对路径（public 目录下的 "图片tr" 文件夹）
+const IMAGE_DIR = path.join(PUBLIC_DIR, '图片tr');
 
 // 支持的图片扩展名
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
@@ -56,11 +59,11 @@ app.get('/api/images', (req, res) => {
     }
 });
 
-// 将本地 "图片tr" 目录映射到 /images URL 路径
+// 将 public 目录下的 "图片tr" 映射到 /images URL 路径
 app.use('/images', express.static(IMAGE_DIR));
 
-// 提供项目根目录下其他静态文件（HTML/CSS/JS）
-app.use(express.static(ROOT_DIR));
+// 提供 public 目录下的静态文件（HTML/CSS/JS/光标图片/images.json）
+app.use(express.static(PUBLIC_DIR));
 
 // 启动服务
 app.listen(PORT, () => {

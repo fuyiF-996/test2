@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
+  },
   "dependencies": {
     "express": "^5.2.1"
   }
