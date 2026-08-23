@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 视口设置：响应式核心，禁止用户缩放，保证手机端正常显示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>樱花图集 | 治愈系静态图片浏览</title>
+    <!-- 引入本地样式文件 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!--
+        樱花飘落动画容器
+        使用 pointer-events: none 避免花瓣阻挡鼠标点击
+    -->
+    <div class="sakura-container" id="sakuraContainer"></div>
+
+    <!-- 主图展示区：占据屏幕绝大部分空间，图片居中 -->
+    <main class="gallery-main" id="galleryMain">
+        <div class="image-card">
+            <!-- 加载占位 -->
+            <div class="image-loader" id="imageLoader">正在加载图片...</div>
+            <!-- 当前展示的图片 -->
+            <img id="mainImage" src="" alt="随机图片">
+        </div>
+
+        <!-- 图片计数小标签 -->
+        <div class="image-counter" id="imageCounter">0 / 0</div>
+    </main>
+
+    <!-- 底部控制按钮区 -->
+    <footer class="controls">
+        <button class="btn btn-random" id="btnRandom" type="button">
+            <span class="btn-icon">🌸</span>
+            <span class="btn-text">随机换一张</span>
+        </button>
+        <button class="btn btn-download" id="btnDownload" type="button">
+            <span class="btn-icon">💾</span>
+            <span class="btn-text">下载当前图片</span>
+        </button>
+    </footer>
+
+    <!-- 引入本地脚本文件 -->
+    <script src="main.js"></script>
+</body>
+</html>

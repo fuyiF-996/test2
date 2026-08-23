@@ -1,0 +1,325 @@
+/* ============================
+   全局重置与基础设置
+   ============================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    /* 禁止移动端弹性滚动，让应用更像原生应用 */
+    overscroll-behavior: none;
+}
+
+body {
+    /* 日系清新柔和渐变背景：淡粉 -> 米白 -> 淡紫粉 */
+    background: linear-gradient(135deg, #fff5f7 0%, #fffdf5 50%, #f9f0ff 100%);
+    /* 圆润字体栈，优先系统自带圆润字体 */
+    font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "WenQuanYi Micro Hei", sans-serif;
+    color: #7a6a72;
+
+    /* 自定义二次元可爱鼠标指针：用户提供的透明 PNG 压缩为 32x32 后作为独立光标文件 */
+    cursor: url("/cursor-pointer.png") 16 16, auto;
+
+    /* 让主内容区采用 flex 垂直布局 */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ============================
+   樱花飘落特效
+   ============================ */
+.sakura-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 花瓣不响应鼠标事件，避免遮挡点击 */
+    pointer-events: none;
+    /* 层级较低，仅作为背景氛围 */
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* 单个花瓣 */
+.petal {
+    position: absolute;
+    top: -40px;
+    /* 花瓣形状：椭圆 + 轻微旋转 */
+    border-radius: 150% 0 150% 0;
+    background: linear-gradient(135deg, rgba(255, 183, 197, 0.9), rgba(255, 220, 230, 0.7));
+    box-shadow: 0 0 4px rgba(255, 182, 193, 0.4);
+    opacity: 0.85;
+    /* 初始轻微旋转 */
+    transform: rotate(0deg);
+    /* 飘落动画：名字由 JS 动态绑定，避免冲突 */
+    will-change: transform, opacity;
+}
+
+/* 花瓣飘落关键帧：垂直下落 + 水平摇摆 + 旋转 */
+@keyframes fall {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0.85;
+    }
+    25% {
+        transform: translateY(25vh) translateX(20px) rotate(90deg);
+    }
+    50% {
+        transform: translateY(50vh) translateX(-15px) rotate(180deg);
+    }
+    75% {
+        transform: translateY(75vh) translateX(25px) rotate(270deg);
+    }
+    100% {
+        transform: translateY(110vh) translateX(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ============================
+   主图展示区
+   ============================ */
+.gallery-main {
+    /* 占据剩余全部空间 */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    /* 高于花瓣层 */
+    z-index: 10;
+    position: relative;
+    width: 100%;
+}
+
+/* 图片卡片：圆角 + 柔和阴影 */
+.image-card {
+    position: relative;
+    max-width: 92vw;
+    max-height: 72vh;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 24px;
+    padding: 10px;
+    box-shadow:
+        0 10px 40px rgba(255, 183, 197, 0.25),
+        0 4px 12px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 14px 50px rgba(255, 183, 197, 0.35),
+        0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* 当前展示图片 */
+.image-card img {
+    display: block;
+    max-width: 100%;
+    max-height: 68vh;
+    border-radius: 18px;
+    object-fit: contain;
+    /* 切换图片时的淡入效果 */
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.image-card img.loaded {
+    opacity: 1;
+}
+
+/* 加载占位 */
+.image-loader {
+    position: absolute;
+    color: #ff9eb5;
+    font-size: 16px;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.image-loader.show {
+    opacity: 1;
+}
+
+/* 图片计数器 */
+.image-counter {
+    margin-top: 14px;
+    font-size: 14px;
+    color: #b89ca6;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 6px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    user-select: none;
+}
+
+/* ============================
+   底部按钮区
+   ============================ */
+.controls {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    padding: 18px 20px 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    /* 按钮区顶部微弱分隔光晕 */
+    background: linear-gradient(to top, rgba(255, 245, 247, 0.9), transparent);
+}
+
+/* 基础按钮样式 */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    outline: none;
+    padding: 14px 26px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+    /* 柔和阴影 */
+    box-shadow: 0 6px 18px rgba(255, 158, 181, 0.35);
+    /* 鼠标变为手型，同时继承自定义光标 */
+    cursor: pointer;
+    /* 点击时按钮本身也允许水波纹出现 */
+    position: relative;
+    overflow: hidden;
+    transition:
+        transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 按钮图标 */
+.btn-icon {
+    font-size: 18px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* 随机换一张按钮：粉紫渐变 */
+.btn-random {
+    background: linear-gradient(135deg, #ffb7c5 0%, #e2a8ff 100%);
+}
+
+/* 下载按钮：蓝粉渐变 */
+.btn-download {
+    background: linear-gradient(135deg, #a8d8ff 0%, #ffc4d6 100%);
+}
+
+/* 按钮悬浮效果：轻微放大 + 更亮 + 阴影扩散 */
+.btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    filter: brightness(1.08);
+    box-shadow: 0 10px 28px rgba(255, 158, 181, 0.45);
+}
+
+/* 按钮点击瞬间 */
+.btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* ============================
+   点击水波纹特效
+   ============================ */
+.ripple {
+    position: fixed;
+    border-radius: 50%;
+    /* 淡粉色半透明圆环 */
+    border: 2px solid rgba(255, 183, 197, 0.6);
+    background: rgba(255, 220, 230, 0.25);
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0);
+    z-index: 9999;
+    animation: ripple-expand 0.7s ease-out forwards;
+}
+
+@keyframes ripple-expand {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 0.8;
+    }
+    100% {
+        width: 120px;
+        height: 120px;
+        opacity: 0;
+    }
+}
+
+/* ============================
+   响应式适配
+   ============================ */
+@media (max-width: 640px) {
+    .gallery-main {
+        padding: 14px;
+    }
+
+    .image-card {
+        max-width: 96vw;
+        max-height: 68vh;
+        border-radius: 20px;
+        padding: 8px;
+    }
+
+    .image-card img {
+        max-height: 62vh;
+        border-radius: 14px;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 12px;
+        padding: 14px 16px 22px;
+    }
+
+    .btn {
+        width: 78vw;
+        max-width: 320px;
+        padding: 13px 22px;
+        font-size: 15px;
+    }
+
+    .image-counter {
+        font-size: 12px;
+        margin-top: 10px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .image-card {
+        max-width: 80vw;
+    }
+
+    .btn {
+        padding: 16px 34px;
+        font-size: 17px;
+    }
+}
