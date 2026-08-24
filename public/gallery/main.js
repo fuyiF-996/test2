@@ -17,6 +17,7 @@ let isLoading = false;    // 是否正在加载图片
 // 图片文件夹在服务器上的静态资源路径。
 // Cloudflare Pages 可能从仓库根目录发布，本地 Express 则映射到 /images。
 let imageBaseUrl = '/images';
+const ASSET_VERSION = '20260824-4';
 
 // 背景音乐配置
 const GALLERY_MUSIC_FILE = '樋口秀樹、柳英一朗、西坂恭平 - Endless Story.mp3';
@@ -111,7 +112,7 @@ async function loadImageList() {
 
 async function fetchImageManifest() {
     const manifestSources = [
-        { url: '/images.json', imageBaseUrl: '/图片tr' },
+        { url: '/images.json?v=' + ASSET_VERSION, imageBaseUrl: '/图片tr' },
         { url: '/api/images', imageBaseUrl: '/images' }
     ];
 

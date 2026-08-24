@@ -12,9 +12,10 @@
 // ============================
 const SAKURA_CODE = 1314;
 const MAX_COINS = 50;
+const ASSET_VERSION = '20260824-4';
 const ROMANTIC_POEM = '一生一世，樱你而来。';
 const MUSIC_FILE = '樋口秀樹、柳英一朗、西坂恭平 - Endless Story.mp3';
-const MUSIC_URL = '/music/' + encodeURIComponent(MUSIC_FILE);
+const MUSIC_URL = '/music/' + encodeURIComponent(MUSIC_FILE) + '?v=' + ASSET_VERSION;
 
 // ============================
 // DOM 元素引用
@@ -254,12 +255,12 @@ function showGalleryFrame() {
     // 清理过渡动画遮罩，避免遮挡 iframe 内容
     document.querySelector('.romantic-overlay')?.remove();
 
-    galleryFrame.src = '/gallery/';
+    galleryFrame.src = '/gallery/?v=' + ASSET_VERSION;
     galleryFrame.classList.add('show');
     document.body.classList.add('gallery-active');
 
     // 更新地址栏为 /gallery/，支持刷新和分享
-    history.pushState({ view: 'gallery' }, '', '/gallery/');
+    history.pushState({ view: 'gallery' }, '', '/gallery/?v=' + ASSET_VERSION);
 }
 
 function hideGalleryFrame() {
@@ -310,7 +311,7 @@ function playRomanticMusic() {
 // 预加载樱花图集图片
 // ============================
 function preloadGalleryImage() {
-    fetch('/images.json')
+    fetch('/images.json?v=' + ASSET_VERSION)
         .then((response) => {
             if (!response.ok) {
                 throw new Error('获取图片列表失败');
