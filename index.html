@@ -35,6 +35,67 @@
         <div class="result-chart" id="resultChart"></div>
     </section>
 
+    <!-- 实用小工具面板 -->
+    <section class="tools-panel" id="toolsPanel">
+        <button class="tools-toggle" id="toolsToggle" type="button" aria-expanded="false">
+            <span class="toggle-icon">🧰</span>
+            <span class="toggle-text">实用小工具</span>
+            <span class="toggle-arrow" id="toolsArrow">▼</span>
+        </button>
+        <div class="tools-content" id="toolsContent" aria-hidden="true">
+            <div class="tools-grid">
+                <!-- 倒计时器 -->
+                <div class="tool-card">
+                    <h3 class="tool-title">⏳ 倒计时器</h3>
+                    <div class="tool-range-row">
+                        <input class="tool-input tool-input-small" id="countdownMin" type="number" min="0" placeholder="分" value="1">
+                        <span class="tool-range-sep">:</span>
+                        <input class="tool-input tool-input-small" id="countdownSec" type="number" min="0" max="59" placeholder="秒" value="0">
+                    </div>
+                    <div class="countdown-display" id="countdownDisplay">01:00</div>
+                    <div class="countdown-controls">
+                        <button class="tool-btn" id="countdownStart" type="button">开始</button>
+                        <button class="tool-btn" id="countdownPause" type="button">暂停</button>
+                        <button class="tool-btn" id="countdownReset" type="button">重置</button>
+                    </div>
+                    <div class="tool-result" id="countdownResult"></div>
+                </div>
+
+                <!-- YES / NO -->
+                <div class="tool-card">
+                    <h3 class="tool-title">⚖️ YES / NO</h3>
+                    <p class="tool-desc">心里默念问题，点击获取答案</p>
+                    <button class="tool-btn tool-btn-large" id="yesNoBtn" type="button">获取答案</button>
+                    <div class="tool-result" id="yesNoResult"></div>
+                </div>
+
+                <!-- 随机数字 -->
+                <div class="tool-card">
+                    <h3 class="tool-title">🎲 随机数字</h3>
+                    <div class="tool-range-row">
+                        <input class="tool-input tool-input-small" id="randomMin" type="number" placeholder="最小" value="1">
+                        <span class="tool-range-sep">~</span>
+                        <input class="tool-input tool-input-small" id="randomMax" type="number" placeholder="最大" value="100">
+                    </div>
+                    <button class="tool-btn" id="randomNumBtn" type="button">生成</button>
+                    <div class="tool-result" id="randomNumResult"></div>
+                </div>
+
+                <!-- BMI 计算器 -->
+                <div class="tool-card">
+                    <h3 class="tool-title">⚖️ BMI 计算器</h3>
+                    <div class="tool-range-row">
+                        <input class="tool-input tool-input-small" id="bmiHeight" type="number" min="1" placeholder="身高 cm" value="170">
+                        <span class="tool-range-sep">|</span>
+                        <input class="tool-input tool-input-small" id="bmiWeight" type="number" min="1" placeholder="体重 kg" value="65">
+                    </div>
+                    <button class="tool-btn" id="bmiCalcBtn" type="button">计算</button>
+                    <div class="tool-result" id="bmiResult"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- 樱花图集全屏 iframe：音乐由父页面持续播放，避免跳转中断 -->
     <iframe
         class="gallery-frame"

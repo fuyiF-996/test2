@@ -52,6 +52,9 @@ function init() {
 
     // 处理浏览器前进/后退按钮
     window.addEventListener('popstate', handlePopState);
+
+    // 初始化实用小工具面板
+    initTools();
 }
 
 // ============================
@@ -385,4 +388,209 @@ function hideMessage() {
 // ============================
 // 页面加载完成后启动
 // ============================
+// ============================
+// 实用小工具面板
+// ============================
+
+// 倒计时器状态
+let countdownTarget = 0;
+let countdownRemaining = 0;
+let countdownInterval = null;
+let countdownRunning = false;
+
+function initTools() {
+    const toolsToggle = document.getElementById('toolsToggle');
+    const toolsContent = document.getElementById('toolsContent');
+    const toolsArrow = document.getElementById('toolsArrow');
+
+    if (!toolsToggle || !toolsContent) return;
+
+    toolsToggle.addEventListener('click', () => {
+        const isExpanded = toolsContent.classList.toggle('show');
+        toolsToggle.setAttribute('aria-expanded', String(isExpanded));
+        toolsContent.setAttribute('aria-hidden', String(!isExpanded));
+        toolsArrow.textContent = isExpanded ? '▲' : '▼';
+    });
+
+    // 倒计时器
+    document.getElementById('countdownStart').addEventListener('click', handleCountdownStart);
+    document.getElementById('countdownPause').addEventListener('click', handleCountdownPause);
+    document.getElementById('countdownReset').addEventListener('click', handleCountdownReset);
+
+    // YES / NO
+    document.getElementById('yesNoBtn').addEventListener('click', handleYesNo);
+
+    // 随机数字
+    document.getElementById('randomNumBtn').addEventListener('click', handleRandomNumber);
+
+    // BMI 计算器
+    document.getElementById('bmiCalcBtn').addEventListener('click', handleBMI);
+}
+
+/**
+ * 在工具结果区显示结果，并支持类型样式
+ */
+function showToolResult(element, text, type = 'default') {
+    element.textContent = text;
+    element.className = 'tool-result show ' + type;
+
+    // 移除动画类，强制重排后再添加，触发重新淡入
+    element.classList.remove('show');
+    void element.offsetWidth;
+    element.classList.add('show');
+}
+
+// ============================
+// 倒计时器
+// ============================
+function handleCountdownStart() {
+    const minInput = document.getElementById('countdownMin');
+    const secInput = document.getElementById('countdownSec');
+    const display = document.getElementById('countdownDisplay');
+    const result = document.getElementById('countdownResult');
+
+    if (!countdownRunning) {
+        // 如果没有剩余时间（已结束或被重置），重新读取输入
+        if (countdownRemaining <= 0) {
+            const minutes = Math.max(0, Number(minInput.value) || 0);
+            const seconds = Math.max(0, Math.min(59, Number(secInput.value) || 0));
+            countdownRemaining = (minutes * 60 + seconds) * 1000;
+        }
+
+        if (countdownRemaining <= 0) {
+            showToolResult(result, '请输入有效的时间', 'warning');
+            return;
+        }
+
+        countdownTarget = Date.now() + countdownRemaining;
+        countdownRunning = true;
+        showToolResult(result, '倒计时进行中...', 'default');
+
+        countdownInterval = setInterval(() => {
+            const left = countdownTarget - Date.now();
+            if (left <= 0) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+                countdownRunning = false;
+                countdownRemaining = 0;
+                display.textContent = '00:00';
+                showToolResult(result, '时间到！', 'success');
+            } else {
+                countdownRemaining = left;
+                display.textContent = formatCountdown(left);
+            }
+        }, 100);
+    }
+}
+
+function handleCountdownPause() {
+    if (countdownRunning && countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+        countdownRunning = false;
+        countdownRemaining = Math.max(0, countdownTarget - Date.now());
+
+        const result = document.getElementById('countdownResult');
+        showToolResult(result, '已暂停', 'warning');
+    }
+}
+
+function handleCountdownReset() {
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }
+    countdownRunning = false;
+    countdownRemaining = 0;
+
+    const minInput = document.getElementById('countdownMin');
+    const secInput = document.getElementById('countdownSec');
+    const display = document.getElementById('countdownDisplay');
+    const result = document.getElementById('countdownResult');
+
+    const minutes = Math.max(0, Number(minInput.value) || 0);
+    const seconds = Math.max(0, Math.min(59, Number(secInput.value) || 0));
+    display.textContent = formatCountdown((minutes * 60 + seconds) * 1000);
+    result.textContent = '';
+    result.className = 'tool-result';
+}
+
+function formatCountdown(ms) {
+    const totalSeconds = Math.ceil(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+// YES / NO
+function handleYesNo() {
+    const result = document.getElementById('yesNoResult');
+    const answers = [
+        { text: '是', type: 'success' },
+        { text: '否', type: 'danger' },
+        { text: '再想想', type: 'warning' }
+    ];
+    const answer = answers[Math.floor(Math.random() * answers.length)];
+    showToolResult(result, answer.text, answer.type);
+}
+
+// 随机数字
+function handleRandomNumber() {
+    const minInput = document.getElementById('randomMin');
+    const maxInput = document.getElementById('randomMax');
+    const result = document.getElementById('randomNumResult');
+
+    const min = Number(minInput.value);
+    const max = Number(maxInput.value);
+
+    if (!Number.isInteger(min) || !Number.isInteger(max)) {
+        showToolResult(result, '请输入有效整数', 'warning');
+        return;
+    }
+
+    if (min > max) {
+        showToolResult(result, '最小值不能大于最大值', 'warning');
+        return;
+    }
+
+    const num = Math.floor(Math.random() * (max - min + 1)) + min;
+    showToolResult(result, `结果：${num}`, 'success');
+}
+
+// BMI 计算器
+function handleBMI() {
+    const heightInput = document.getElementById('bmiHeight');
+    const weightInput = document.getElementById('bmiWeight');
+    const result = document.getElementById('bmiResult');
+
+    const height = Number(heightInput.value);
+    const weight = Number(weightInput.value);
+
+    if (!height || !weight || height <= 0 || weight <= 0) {
+        showToolResult(result, '请输入有效的身高和体重', 'warning');
+        return;
+    }
+
+    const bmi = weight / ((height / 100) ** 2);
+    const value = bmi.toFixed(1);
+
+    let category = '';
+    let type = 'success';
+    if (bmi < 18.5) {
+        category = '偏瘦';
+        type = 'warning';
+    } else if (bmi < 24) {
+        category = '正常';
+        type = 'success';
+    } else if (bmi < 28) {
+        category = '偏胖';
+        type = 'warning';
+    } else {
+        category = '肥胖';
+        type = 'danger';
+    }
+
+    showToolResult(result, `BMI：${value} ${category}`, type);
+}
+
 document.addEventListener('DOMContentLoaded', init);

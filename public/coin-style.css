@@ -442,6 +442,215 @@ body.is-transitioning .result-area {
 }
 
 /* ============================
+   实用小工具面板
+   ============================ */
+.tools-panel {
+    width: 100%;
+    max-width: 420px;
+    margin-top: 28px;
+    z-index: 10;
+}
+
+.tools-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #5f6caf 0%, #4a90e2 100%);
+    box-shadow: 0 6px 18px rgba(74, 144, 226, 0.28);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.tools-toggle:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow: 0 8px 22px rgba(74, 144, 226, 0.36);
+}
+
+.toggle-icon {
+    font-size: 16px;
+}
+
+.toggle-arrow {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.tools-content {
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    transition: max-height 0.45s ease, opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.tools-content.show {
+    max-height: 800px;
+    opacity: 1;
+    visibility: visible;
+    margin-top: 16px;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.tool-card {
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.08);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tool-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #4a5568;
+    margin: 0;
+}
+
+.tool-desc {
+    font-size: 12px;
+    color: #718096;
+    margin: -4px 0 0;
+}
+
+.tool-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid rgba(74, 144, 226, 0.35);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    color: #4a5568;
+    font-family: inherit;
+    outline: none;
+    resize: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.tool-input::placeholder {
+    color: #a0aec0;
+}
+
+.tool-input:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+}
+
+.tool-input-small {
+    padding: 8px 10px;
+    text-align: center;
+}
+
+.tool-range-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tool-range-sep {
+    color: #718096;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.tool-btn {
+    width: 100%;
+    padding: 9px 0;
+    border: none;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #5f6caf 0%, #4a90e2 100%);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.28);
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tool-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow: 0 6px 16px rgba(74, 144, 226, 0.36);
+}
+
+.tool-btn-large {
+    padding: 14px 0;
+    font-size: 14px;
+}
+
+.tool-result {
+    min-height: 22px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    color: #4a5568;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.3s ease, transform 0.3s ease, color 0.3s ease;
+}
+
+.tool-result.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tool-result.success {
+    color: #38a169;
+}
+
+.tool-result.danger {
+    color: #e53e3e;
+}
+
+.tool-result.warning {
+    color: #dd6b20;
+}
+
+.tool-result.default {
+    color: #4a5568;
+}
+
+/* 倒计时器专用样式 */
+.countdown-display {
+    font-size: 28px;
+    font-weight: 700;
+    font-family: "Consolas", "Monaco", "Courier New", monospace;
+    text-align: center;
+    color: #4a5568;
+    min-height: 36px;
+    margin: 4px 0;
+    letter-spacing: 2px;
+}
+
+.countdown-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.countdown-controls .tool-btn {
+    flex: 1;
+    padding: 8px 0;
+    font-size: 12px;
+}
+
+/* ============================
    响应式适配
    ============================ */
 @media (max-width: 480px) {
@@ -491,5 +700,17 @@ body.is-transitioning .result-area {
     .romantic-poem {
         font-size: 24px;
         letter-spacing: 2px;
+    }
+
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tool-card {
+        padding: 14px;
+    }
+
+    .countdown-display {
+        font-size: 24px;
     }
 }
