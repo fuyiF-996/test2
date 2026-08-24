@@ -650,6 +650,113 @@ body.is-transitioning .result-area {
     font-size: 12px;
 }
 
+/* 今日运势专用样式 */
+.fortune-result {
+    text-align: left !important;
+    padding-top: 8px;
+}
+
+.fortune-level {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    padding: 6px 0;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.fortune-level.大吉 {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+}
+
+.fortune-level.中吉 {
+    background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);
+}
+
+.fortune-level.吉 {
+    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+}
+
+.fortune-level.平 {
+    background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+}
+
+.fortune-level.凶 {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+}
+
+.fortune-intro {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #4a5568;
+    margin: 8px 0;
+}
+
+.fortune-section {
+    margin: 8px 0;
+    font-size: 12px;
+}
+
+.fortune-section strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.fortune-good strong {
+    color: #38a169;
+}
+
+.fortune-bad strong {
+    color: #e53e3e;
+}
+
+.fortune-section ul {
+    margin: 0;
+    padding-left: 16px;
+    color: #4a5568;
+}
+
+.fortune-section li {
+    margin: 2px 0;
+}
+
+.fortune-tip {
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(74, 144, 226, 0.1);
+    font-size: 12px;
+    font-style: italic;
+    color: #718096;
+    line-height: 1.5;
+}
+
+.fortune-cooldown {
+    min-height: 18px;
+    margin-top: 6px;
+    font-size: 12px;
+    text-align: center;
+    color: #dd6b20;
+}
+
+.tool-btn:disabled,
+.tool-btn.disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.tool-btn:disabled:hover,
+.tool-btn.disabled:hover {
+    transform: none;
+    filter: none;
+    box-shadow: none;
+}
+
 /* ============================
    响应式适配
    ============================ */
