@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>幸运抛硬币</title>
+    <link rel="stylesheet" href="coin-style.css">
+</head>
+<body>
+    <header>
+        <h1>幸运抛硬币</h1>
+        <p>输入数字，看看今天手气如何</p>
+    </header>
+
+    <main class="coin-stage" id="coinStage">
+        <!-- 硬币由 JS 动态生成 -->
+    </main>
+
+    <section class="coin-controls">
+        <div class="input-row">
+            <input
+                type="text"
+                inputmode="numeric"
+                id="numberInput"
+                placeholder="输入数字，如 1、2、10"
+                autocomplete="off"
+            >
+            <button id="flipBtn" type="button">开始抛硬币</button>
+        </div>
+        <div id="messageBox"></div>
+    </section>
+
+    <section class="result-area" id="resultArea">
+        <div class="result-stats" id="resultStats"></div>
+        <div class="result-chart" id="resultChart"></div>
+    </section>
+
+    <script src="coin.js"></script>
+</body>
+</html>
