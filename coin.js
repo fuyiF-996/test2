@@ -12,6 +12,9 @@
 // ============================
 const SAKURA_CODE = 1314;
 const MAX_COINS = 50;
+const ROMANTIC_POEM = '一生一世，樱你而来。';
+const MUSIC_FILE = '樋口秀樹、柳英一朗、西坂恭平 - Endless Story.mp3';
+const MUSIC_URL = '/music/' + encodeURIComponent(MUSIC_FILE);
 
 // ============================
 // DOM 元素引用
@@ -23,6 +26,7 @@ const messageBox = document.getElementById('messageBox');
 const resultArea = document.getElementById('resultArea');
 const resultStats = document.getElementById('resultStats');
 const resultChart = document.getElementById('resultChart');
+const galleryFrame = document.getElementById('galleryFrame');
 
 // ============================
 // 状态
@@ -42,6 +46,12 @@ function init() {
             handleSubmit();
         }
     });
+
+    // 监听 iframe 内返回按钮发送的消息
+    window.addEventListener('message', handleGalleryMessage);
+
+    // 处理浏览器前进/后退按钮
+    window.addEventListener('popstate', handlePopState);
 }
 
 // ============================
@@ -151,6 +161,176 @@ function renderResult() {
 }
 
 // ============================
+// 浪漫过渡动画：樱花雨 + 诗句 + 光晕跳转
+// ============================
+function startRomanticTransition() {
+    // 禁用交互，隐藏普通结果与提示
+    numberInput.disabled = true;
+    flipBtn.disabled = true;
+    hideMessage();
+    resultArea.classList.remove('show');
+    document.body.classList.add('is-transitioning');
+
+    // 播放浪漫背景音乐（用户点击按钮后触发，符合浏览器自动播放策略）
+    playRomanticMusic();
+
+    // 利用动画时间预加载一张樱花图，跳转后可直接显示
+    preloadGalleryImage();
+
+    // 创建全屏过渡容器
+    const overlay = document.createElement('div');
+    overlay.className = 'romantic-overlay';
+
+    // 创建诗句元素
+    const poem = document.createElement('div');
+    poem.className = 'romantic-poem';
+    poem.textContent = ROMANTIC_POEM;
+    overlay.appendChild(poem);
+
+    // 创建最终光晕覆盖层
+    const whitewash = document.createElement('div');
+    whitewash.className = 'romantic-whitewash';
+    overlay.appendChild(whitewash);
+
+    document.body.appendChild(overlay);
+
+    // 强制重排后添加 show 类，触发 CSS 过渡
+    void overlay.offsetWidth;
+    overlay.classList.add('show');
+
+    // 启动密集樱花雨
+    const petalInterval = setInterval(() => {
+        createTransitionPetal(overlay);
+    }, 80);
+
+    // 时序控制
+    setTimeout(() => {
+        poem.classList.add('show');
+    }, 100);
+
+    setTimeout(() => {
+        whitewash.classList.add('show');
+    }, 3600);
+
+    setTimeout(() => {
+        clearInterval(petalInterval);
+        showGalleryFrame();
+    }, 4800);
+}
+
+/**
+ * 创建一片过渡樱花花瓣
+ */
+function createTransitionPetal(container) {
+    const petal = document.createElement('div');
+    petal.className = 'romantic-petal';
+
+    const size = Math.random() * 14 + 8;
+    petal.style.width = `${size}px`;
+    petal.style.height = `${size}px`;
+
+    const startLeft = Math.random() * 120 - 10;
+    petal.style.left = `${startLeft}%`;
+
+    const duration = Math.random() * 4 + 4;
+    petal.style.animationDuration = `${duration}s`;
+
+    petal.style.opacity = Math.random() * 0.4 + 0.5;
+    petal.style.animationDelay = `${Math.random() * 2}s`;
+
+    const hue = Math.floor(Math.random() * 30) + 330;
+    petal.style.background = `linear-gradient(135deg, hsl(${hue}, 90%, 88%), hsl(${hue}, 80%, 95%))`;
+
+    container.appendChild(petal);
+}
+
+// ============================
+// 通过 iframe 展示樱花图集（保持音乐连续播放）
+// ============================
+function showGalleryFrame() {
+    // 清理过渡动画遮罩，避免遮挡 iframe 内容
+    document.querySelector('.romantic-overlay')?.remove();
+
+    galleryFrame.src = '/gallery/';
+    galleryFrame.classList.add('show');
+    document.body.classList.add('gallery-active');
+
+    // 更新地址栏为 /gallery/，支持刷新和分享
+    history.pushState({ view: 'gallery' }, '', '/gallery/');
+}
+
+function hideGalleryFrame() {
+    galleryFrame.classList.remove('show');
+    document.body.classList.remove('gallery-active');
+    galleryFrame.src = 'about:blank';
+
+    // 恢复硬币页交互
+    numberInput.disabled = false;
+    flipBtn.disabled = false;
+    document.body.classList.remove('is-transitioning');
+}
+
+function handleGalleryMessage(event) {
+    // 只响应同域 iframe 发来的返回消息
+    if (event.origin !== window.location.origin) return;
+    if (event.data === 'navigate-back') {
+        history.back();
+    }
+}
+
+function handlePopState() {
+    if (history.state && history.state.view === 'gallery') {
+        galleryFrame.classList.add('show');
+        document.body.classList.add('gallery-active');
+    } else {
+        hideGalleryFrame();
+    }
+}
+
+// ============================
+// 播放浪漫背景音乐
+// ============================
+function playRomanticMusic() {
+    const audio = document.createElement('audio');
+    audio.src = MUSIC_URL;
+    audio.volume = 0.3;
+    audio.loop = true;
+    audio.style.display = 'none';
+    document.body.appendChild(audio);
+
+    audio.play().catch((error) => {
+        console.warn('[提示] 音乐自动播放被浏览器阻止:', error);
+    });
+}
+
+// ============================
+// 预加载樱花图集图片
+// ============================
+function preloadGalleryImage() {
+    fetch('/images.json')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('获取图片列表失败');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            const images = data.images || [];
+            if (images.length === 0) return;
+
+            // 随机选一张预加载，跳转后 gallery 会优先展示这张图
+            const preloadedImage = images[Math.floor(Math.random() * images.length)];
+            sessionStorage.setItem('preloadedImage', preloadedImage);
+
+            const img = new Image();
+            img.src = '/图片tr/' + encodeURIComponent(preloadedImage);
+        })
+        .catch((error) => {
+            console.warn('[提示] 预加载图片失败:', error);
+        });
+}
+
+// ============================
 // 处理用户提交
 // ============================
 function handleSubmit() {
@@ -169,7 +349,7 @@ function handleSubmit() {
     }
 
     if (num === SAKURA_CODE) {
-        window.location.href = '/gallery/';
+        startRomanticTransition();
         return;
     }
 

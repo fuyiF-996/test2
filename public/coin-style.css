@@ -308,6 +308,140 @@ header p {
 }
 
 /* ============================
+   全屏 iframe 樱花图集
+   ============================ */
+.gallery-frame {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.02);
+    transition: opacity 0.8s ease, transform 0.8s ease, visibility 0.8s ease;
+}
+
+.gallery-frame.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+body.gallery-active .coin-stage,
+body.gallery-active .coin-controls,
+body.gallery-active .result-area,
+body.gallery-active header {
+    display: none;
+}
+
+/* ============================
+   1314 浪漫过渡动画
+   ============================ */
+body.is-transitioning {
+    overflow: hidden;
+}
+
+body.is-transitioning .coin-stage,
+body.is-transitioning .coin-controls,
+body.is-transitioning .result-area {
+    filter: blur(2px);
+    transition: filter 0.6s ease;
+}
+
+.romantic-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, rgba(30, 30, 40, 0.55) 100%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.romantic-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* 浪漫诗句 */
+.romantic-poem {
+    position: relative;
+    z-index: 1002;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-align: center;
+    padding: 0 24px;
+    background: linear-gradient(135deg, #ffb7c5 0%, #e2a8ff 50%, #a8d8ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 4px 20px rgba(255, 183, 197, 0.35);
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.romantic-poem.show {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* 最终光晕覆盖 */
+.romantic-whitewash {
+    position: absolute;
+    inset: 0;
+    z-index: 1001;
+    background: radial-gradient(circle at center, #fff8fb 0%, #fff0f5 60%, #ffe6ee 100%);
+    opacity: 0;
+    transition: opacity 1.2s ease;
+}
+
+.romantic-whitewash.show {
+    opacity: 1;
+}
+
+/* 过渡樱花花瓣 */
+.romantic-petal {
+    position: absolute;
+    top: -40px;
+    border-radius: 150% 0 150% 0;
+    box-shadow: 0 0 4px rgba(255, 182, 193, 0.4);
+    opacity: 0.85;
+    transform: rotate(0deg);
+    will-change: transform, opacity;
+    animation-name: romantic-fall;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+@keyframes romantic-fall {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0.85;
+    }
+    25% {
+        transform: translateY(25vh) translateX(20px) rotate(90deg);
+    }
+    50% {
+        transform: translateY(50vh) translateX(-15px) rotate(180deg);
+    }
+    75% {
+        transform: translateY(75vh) translateX(25px) rotate(270deg);
+    }
+    100% {
+        transform: translateY(110vh) translateX(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ============================
    响应式适配
    ============================ */
 @media (max-width: 480px) {
@@ -352,5 +486,10 @@ header p {
 
     .stat-value {
         font-size: 24px;
+    }
+
+    .romantic-poem {
+        font-size: 24px;
+        letter-spacing: 2px;
     }
 }

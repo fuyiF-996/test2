@@ -18,6 +18,10 @@ let isLoading = false;    // 是否正在加载图片
 // Cloudflare Pages 可能从仓库根目录发布，本地 Express 则映射到 /images。
 let imageBaseUrl = '/images';
 
+// 背景音乐配置
+const GALLERY_MUSIC_FILE = '樋口秀樹、柳英一朗、西坂恭平 - Endless Story.mp3';
+const GALLERY_MUSIC_URL = '/music/' + encodeURIComponent(GALLERY_MUSIC_FILE);
+
 // ============================
 // DOM 元素引用
 // ============================
@@ -33,6 +37,11 @@ const sakuraContainer = document.getElementById('sakuraContainer');
 // 初始化入口
 // ============================
 async function init() {
+    // 播放背景音乐（仅在独立页面播放；作为 iframe 嵌入时由父页面统一播放，避免双重音乐）
+    if (window.self === window.top) {
+        playGalleryMusic();
+    }
+
     // 启动樱花飘落
     startSakuraFall();
 
@@ -40,7 +49,11 @@ async function init() {
     btnRandom.addEventListener('click', handleRandomClick);
     btnDownload.addEventListener('click', handleDownloadClick);
     btnBack.addEventListener('click', () => {
-        window.location.href = '/';
+        if (window.self !== window.top && window.parent) {
+            window.parent.postMessage('navigate-back', window.location.origin);
+        } else {
+            window.location.href = '/';
+        }
     });
 
     // 绑定全局点击水波纹
@@ -73,7 +86,21 @@ async function loadImageList() {
             return;
         }
 
-        // 首次加载随机展示一张
+        // 如果存在预加载的图片，优先展示它，避免“正在加载”的尴尬
+        const preloadedImage = sessionStorage.getItem('preloadedImage');
+        if (preloadedImage) {
+            sessionStorage.removeItem('preloadedImage');
+            const preloadedIndex = imageList.findIndex((name) => name === preloadedImage);
+            if (preloadedIndex !== -1) {
+                currentIndex = preloadedIndex;
+                const imageUrl = `${imageBaseUrl}/${encodeURIComponent(preloadedImage)}`;
+                loadImage(imageUrl);
+                updateCounter();
+                return;
+            }
+        }
+
+        // 否则首次加载随机展示一张
         showRandomImage();
         updateCounter();
     } catch (error) {
@@ -295,6 +322,22 @@ function createRipple(e) {
             ripple.parentNode.removeChild(ripple);
         }
     }, 700);
+}
+
+// ============================
+// 背景音乐
+// ============================
+function playGalleryMusic() {
+    const audio = document.createElement('audio');
+    audio.src = GALLERY_MUSIC_URL;
+    audio.volume = 0.3;
+    audio.loop = true;
+    audio.style.display = 'none';
+    document.body.appendChild(audio);
+
+    audio.play().catch((error) => {
+        console.warn('[提示] 画廊背景音乐自动播放被浏览器阻止:', error);
+    });
 }
 
 // ============================
