@@ -12,7 +12,7 @@
 // ============================
 const SAKURA_CODE = 1314;
 const MAX_COINS = 50;
-const ASSET_VERSION = '20260824-4';
+const ASSET_VERSION = '20260824-5';
 const ROMANTIC_POEM = '一生一世，樱你而来。';
 const MUSIC_FILE = '樋口秀樹、柳英一朗、西坂恭平 - Endless Story.mp3';
 const MUSIC_URL = '/music/' + encodeURIComponent(MUSIC_FILE) + '?v=' + ASSET_VERSION;

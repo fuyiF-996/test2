@@ -17,7 +17,7 @@ let isLoading = false;    // 是否正在加载图片
 // 图片文件夹在服务器上的静态资源路径。
 // Cloudflare Pages 可能从仓库根目录发布，本地 Express 则映射到 /images。
 let imageBaseUrl = '/images';
-const ASSET_VERSION = '20260824-4';
+const ASSET_VERSION = '20260824-5';
 
 // 背景音乐配置
 const GALLERY_MUSIC_FILE = '樋口秀樹、柳英一朗、西坂恭平 - Endless Story.mp3';
