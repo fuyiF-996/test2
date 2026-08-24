@@ -23,7 +23,7 @@ body {
     color: #7a6a72;
 
     /* 自定义二次元可爱鼠标指针：用户提供的透明 PNG 压缩为 32x32 后作为独立光标文件 */
-    cursor: url("/cursor-pointer.png") 16 16, auto;
+    cursor: url("cursor-pointer.png") 16 16, auto;
 
     /* 让主内容区采用 flex 垂直布局 */
     display: flex;
@@ -232,6 +232,11 @@ body {
 /* 下载按钮：蓝粉渐变 */
 .btn-download {
     background: linear-gradient(135deg, #a8d8ff 0%, #ffc4d6 100%);
+}
+
+/* 返回抛硬币按钮：中性灰蓝渐变 */
+.btn-back {
+    background: linear-gradient(135deg, #8e9eab 0%, #5f6caf 100%);
 }
 
 /* 按钮悬浮效果：轻微放大 + 更亮 + 阴影扩散 */

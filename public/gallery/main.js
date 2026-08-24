@@ -26,6 +26,7 @@ const imageLoader = document.getElementById('imageLoader');
 const imageCounter = document.getElementById('imageCounter');
 const btnRandom = document.getElementById('btnRandom');
 const btnDownload = document.getElementById('btnDownload');
+const btnBack = document.getElementById('btnBack');
 const sakuraContainer = document.getElementById('sakuraContainer');
 
 // ============================
@@ -38,6 +39,9 @@ async function init() {
     // 绑定按钮事件
     btnRandom.addEventListener('click', handleRandomClick);
     btnDownload.addEventListener('click', handleDownloadClick);
+    btnBack.addEventListener('click', () => {
+        window.location.href = '/';
+    });
 
     // 绑定全局点击水波纹
     document.addEventListener('click', createRipple);
@@ -81,7 +85,6 @@ async function loadImageList() {
 async function fetchImageManifest() {
     const manifestSources = [
         { url: '/images.json', imageBaseUrl: '/图片tr' },
-        { url: '/public/images.json', imageBaseUrl: '/public/图片tr' },
         { url: '/api/images', imageBaseUrl: '/images' }
     ];
 

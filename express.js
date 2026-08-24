@@ -68,8 +68,9 @@ app.use(express.static(PUBLIC_DIR));
 // 启动服务
 app.listen(PORT, () => {
     console.log('=================================');
-    console.log('🌸 樱花图集服务已启动');
-    console.log(`👉 访问地址: http://localhost:${PORT}`);
+    console.log('🪙 幸运抛硬币服务已启动');
+    console.log(`👉 抛硬币首页: http://localhost:${PORT}`);
+    console.log(`🌸 樱花图集子项目: http://localhost:${PORT}/gallery/`);
     console.log(`📁 图片目录: ${IMAGE_DIR}`);
     console.log('=================================');
 });
